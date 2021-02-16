@@ -3,6 +3,7 @@ extends KinematicBody2D
 onready var gun_scene = load('res://Objects/Gun.tscn')
 var gun: Sprite
 
+onready var aim_line: Line2D = $aim_line
 onready var ray2d: RayCast2D = $RayCast2D
 
 enum state_enum { Idle, Walking, Aiming }
@@ -25,6 +26,7 @@ func _input(event):
 	if event.is_action_pressed("disparar"):
 		aim()
 	elif event.is_action_released("disparar"):
+		aim_line.clear_points()
 		ray2d.cast_to = Vector2.ZERO
 		change_state(state_enum.Idle)
 		emit_signal("stop_aim")
@@ -35,7 +37,7 @@ func _input(event):
 
 
 # Called when the node enters the scene tree for the first time.
-func _physics_process(delta):
+func _physics_process(_delta):
 	match state:
 		state_enum.Idle, state_enum.Walking:
 			move_control()
@@ -43,8 +45,8 @@ func _physics_process(delta):
 			raycast_control()
 
 func control():
-	direction.x = Input.get_action_strength("derecha") - Input.get_action_strength("izquierda")
-	direction.y = Input.get_action_strength("abajo") - Input.get_action_strength("arriba")
+	direction.x = int(Input.is_action_pressed("derecha")) - int(Input.is_action_pressed("izquierda"))
+	direction.y = int(Input.is_action_pressed("abajo")) - int(Input.is_action_pressed("arriba"))
 	anim_dir()
 
 
@@ -72,16 +74,28 @@ func raycast_control():
 	if direction == Vector2.ZERO:
 		match spritedir:
 			"Left":
-				ray2d.cast_to = Vector2.LEFT * gun_alcance
+				direction = Vector2.LEFT * gun_alcance
 			"Right":
-				ray2d.cast_to = Vector2.RIGHT * gun_alcance
+				direction = Vector2.RIGHT * gun_alcance
 			"Up":
-				ray2d.cast_to = Vector2.UP * gun_alcance
+				direction = Vector2.UP * gun_alcance
 			"Down":
-				ray2d.cast_to = Vector2.DOWN * gun_alcance
-	else:
-		ray2d.cast_to = direction.normalized()*gun_alcance
+				direction = Vector2.DOWN * gun_alcance
+
+	ray2d.cast_to = direction.normalized()*gun_alcance - gun.position
 	emit_signal("change_aim", direction, spritedir)
+	ray2d.position = gun.position
+	draw_aim()
+
+
+func draw_aim():
+	if aim_line.get_point_count() == 0:
+		aim_line.add_point(gun.position)
+		aim_line.add_point(direction.normalized()*gun_alcance)
+	else:
+		aim_line.clear_points()
+		aim_line.add_point(gun.position)
+		aim_line.add_point(direction.normalized()*gun_alcance)
 
 func anim_dir():
 	match direction:

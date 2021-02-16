@@ -10,18 +10,22 @@ func change_aim(direction, spritedir):
 			frame = 0
 			z_index = 0
 			position = Vector2.RIGHT*8
+			rotation_degrees = 0
 		"Left":
 			z_index = -1
 			frame = 1
 			position = Vector2.LEFT*8
+			rotation_degrees = 0
 		"Up":
 			z_index = -1
 			frame = 0
 			position = Vector2.UP*8
+			rotation_degrees = -90
 		"Down":
 			frame = 0
 			z_index = 0
 			position = Vector2.DOWN*8
+			rotation_degrees = 90
 	match direction:
 		Vector2.RIGHT:
 			rotation_degrees = 0

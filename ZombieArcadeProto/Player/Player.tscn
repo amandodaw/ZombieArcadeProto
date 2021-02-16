@@ -159,3 +159,7 @@ anims/WalkingUp = SubResource( 9 )
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 enabled = true
+
+[node name="aim_line" type="Line2D" parent="."]
+width = 1.0
+default_color = Color( 0.862745, 0.054902, 0.14902, 1 )

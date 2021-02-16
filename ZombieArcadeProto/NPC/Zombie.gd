@@ -1,7 +1,5 @@
 extends KinematicBody2D
 
-onready var ray2d: RayCast2D = $RayCast2D
-
 enum state_enum { Idle, Walking, Chasing }
 
 const TYPE = "ZOMBIE"
@@ -16,7 +14,7 @@ var state = state_enum.Idle setget change_state
 
 
 # Called when the node enters the scene tree for the first time.
-func _physics_process(delta):
+func _physics_process(_delta):
 	match state:
 		state_enum.Idle, state_enum.Walking:
 			pass
