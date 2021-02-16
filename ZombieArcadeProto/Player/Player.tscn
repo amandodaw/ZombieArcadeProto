@@ -136,6 +136,7 @@ tracks/0/keys = {
 }
 
 [node name="Player" type="KinematicBody2D"]
+collision_layer = 3
 script = ExtResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]
@@ -157,3 +158,4 @@ anims/WalkingRight = SubResource( 8 )
 anims/WalkingUp = SubResource( 9 )
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
+enabled = true

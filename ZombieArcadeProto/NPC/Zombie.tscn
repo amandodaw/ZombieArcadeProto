@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://NPC/Zombie.gd" type="Script" id=1]
 [ext_resource path="res://Sprites/zombie-Sheet.png" type="Texture" id=2]
@@ -135,6 +135,9 @@ tracks/0/keys = {
 "values": [ 9, 10, 9, 11 ]
 }
 
+[sub_resource type="CircleShape2D" id=10]
+radius = 80.0
+
 [node name="Zombie" type="KinematicBody2D"]
 script = ExtResource( 1 )
 
@@ -155,3 +158,12 @@ anims/WalkingDown = SubResource( 6 )
 anims/WalkingLeft = SubResource( 7 )
 anims/WalkingRight = SubResource( 8 )
 anims/WalkingUp = SubResource( 9 )
+
+[node name="vision" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="vision"]
+shape = SubResource( 10 )
+[connection signal="body_entered" from="vision" to="." method="_on_vision_body_entered"]
+[connection signal="body_exited" from="vision" to="." method="_on_vision_body_exited"]
