@@ -7,6 +7,7 @@ var gun: Sprite
 onready var aim_line: Line2D = $aim_line
 onready var ray2d: RayCast2D = $RayCast2D
 onready var knockback_timer: Timer = $knockback_timer
+onready var pum: AudioStreamPlayer2D = $pum
 
 enum state_enum { Idle, Walking, Aiming, Knocked }
 
@@ -70,15 +71,16 @@ func aim():
 
 
 func shoot():
-	var gunflash = gunflash_scene.instance()
-	add_child(gunflash)
+
 	if ray2d.is_colliding():
+		pum.play()
 		var collider = ray2d.get_collider()
 		if collider.TYPE == "ZOMBIE":
 			collider.health = collider.health - gun.damage
 			collider.knockdir = collider.position - ray2d.get_collision_point()
 			print(collider.position,ray2d.get_collision_point())
-
+		var gunflash = gunflash_scene.instance()
+		add_child(gunflash)
 	aim_line.clear_points()
 	ray2d.cast_to = Vector2.ZERO
 	change_state(state_enum.Idle)
