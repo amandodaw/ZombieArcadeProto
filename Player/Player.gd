@@ -1,5 +1,6 @@
 extends KinematicBody2D
 
+onready var gunflash_scene = load('res://Objects/gunflash.tscn')
 onready var gun_scene = load('res://Objects/Gun.tscn')
 var gun: Sprite
 
@@ -69,12 +70,15 @@ func aim():
 
 
 func shoot():
+	var gunflash = gunflash_scene.instance()
+	add_child(gunflash)
 	if ray2d.is_colliding():
 		var collider = ray2d.get_collider()
 		if collider.TYPE == "ZOMBIE":
 			collider.health = collider.health - gun.damage
 			collider.knockdir = collider.position - ray2d.get_collision_point()
 			print(collider.position,ray2d.get_collision_point())
+
 	aim_line.clear_points()
 	ray2d.cast_to = Vector2.ZERO
 	change_state(state_enum.Idle)

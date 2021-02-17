@@ -1,38 +1,41 @@
-extends Sprite
+extends Light2D
 
 
+func _ready():
+	#rotation_degrees = get_parent().gun.rotation_degrees
+	change_aim()	
+	$Timer.start()
 
 
-var damage = 10
+func _on_Timer_timeout():
+	queue_free()
 
 
-func change_aim(direction, spritedir):
+func change_aim():
+	var direction = get_parent().direction
+	var spritedir = get_parent().spritedir
 	match spritedir:
 		"Right":
-			frame = 0
 			z_index = 0
-			position = Vector2.RIGHT*8
+			position = Vector2.RIGHT*16
 			rotation_degrees = 0
 		"Left":
 			z_index = -1
-			frame = 1
-			position = Vector2.LEFT*8
-			rotation_degrees = 0
+			position = Vector2.LEFT*16
+			rotation_degrees = -180
 		"Up":
 			z_index = -1
-			frame = 0
-			position = Vector2.UP*8
+			position = Vector2.UP*16
 			rotation_degrees = -90
 		"Down":
-			frame = 0
 			z_index = 0
-			position = Vector2.DOWN*8
+			position = Vector2.DOWN*16
 			rotation_degrees = 90
 	match direction:
 		Vector2.RIGHT:
 			rotation_degrees = 0
 		Vector2.LEFT:
-			rotation_degrees = 0
+			rotation_degrees = -180
 		Vector2.UP:
 			rotation_degrees = -90
 		Vector2.DOWN:
@@ -41,32 +44,31 @@ func change_aim(direction, spritedir):
 			match spritedir:
 				"Right":
 					rotation_degrees = 45
+					position.y += 8
 				"Down":
 					rotation_degrees = 45
+					position.x += 8
 		Vector2(-1, -1):
 			match spritedir:
 				"Left":
-					rotation_degrees = 45
+					rotation_degrees = 235
+					position.y -= 8
 				"Up":
 					rotation_degrees = 235
+					position.x -= 8
 		Vector2(-1, 1):
 			match spritedir:
 				"Left":
-					rotation_degrees = -45
+					rotation_degrees = 135
+					position.y += 8
 				"Down":
 					rotation_degrees = 135
+					position.x -= 8
 		Vector2(1, -1):
 			match spritedir:
 				"Right":
 					rotation_degrees = -45
+					position.y -= 8
 				"Up":
 					rotation_degrees = -45
-
-
-func die():
-	queue_free()
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
-
-
+					position.x += 8
