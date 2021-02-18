@@ -9,18 +9,21 @@ onready var ray2d: RayCast2D = $RayCast2D
 onready var knockback_timer: Timer = $knockback_timer
 onready var pum: AudioStreamPlayer2D = $pum
 
-enum state_enum { Idle, Walking, Aiming, Knocked }
+enum state_enum { Idle, Walking, Knocked }
+
+var is_aiming: bool = false
 
 const TYPE = "PLAYER"
 
 var health = 50 setget damage_taken
 var speed = 100
+var aim_speed = 2
 var knockback_speed = 200
 var direction = Vector2.ZERO
+var aim_direction = Vector2.ZERO
 var knockdir = Vector2.ZERO
 var spritedir = "Down"
 var state = state_enum.Idle setget change_state
-
 
 signal change_aim
 signal stop_aim
@@ -40,8 +43,9 @@ func _physics_process(_delta):
 	match state:
 		state_enum.Idle, state_enum.Walking:
 			move_control()
-		state_enum.Aiming:
-			raycast_control()
+			if is_aiming:
+				raycast_control()
+
 		state_enum.Knocked:
 			knockback()
 
@@ -51,18 +55,24 @@ func control():
 	anim_dir()
 
 
+func aim_control():
+	aim_direction.x = int(Input.is_action_pressed("ui_right")) - int(Input.is_action_pressed("ui_left"))
+	aim_direction.y = int(Input.is_action_pressed("ui_down")) - int(Input.is_action_pressed("ui_up"))
+	anim_dir()
+
+
 func move_control():
 	control()
-	
 	if direction == Vector2.ZERO:
-		state = state_enum.Idle
+		change_state(state_enum.Idle)
 		return
-	state = state_enum.Walking
+	change_state(state_enum.Walking)
 	move_and_slide(direction.normalized() * speed)
 
 
 func aim():
-	change_state(state_enum.Aiming)
+	is_aiming = true
+	speed = speed/aim_speed
 	gun = gun_scene.instance()
 	raycast_control()
 	add_child(gun)
@@ -71,7 +81,6 @@ func aim():
 
 
 func shoot():
-
 	if ray2d.is_colliding():
 		pum.play()
 		var collider = ray2d.get_collider()
@@ -83,40 +92,52 @@ func shoot():
 		add_child(gunflash)
 	aim_line.clear_points()
 	ray2d.cast_to = Vector2.ZERO
-	change_state(state_enum.Idle)
+	is_aiming = false
 	emit_signal("stop_aim")
-
+	speed = speed*aim_speed
 
 func raycast_control():
-	control()
-	if direction == Vector2.ZERO:
+	if is_aiming:
+		aim_control()
+		raycast_cast(aim_direction)
+	else:
+		control()
+
+
+
+func raycast_cast(cast_to: Vector2):
+	if cast_to == Vector2.ZERO:
 		match spritedir:
 			"Left":
-				direction = Vector2.LEFT * gun_alcance
+				cast_to = Vector2.LEFT * gun_alcance
 			"Right":
-				direction = Vector2.RIGHT * gun_alcance
+				cast_to = Vector2.RIGHT * gun_alcance
 			"Up":
-				direction = Vector2.UP * gun_alcance
+				cast_to = Vector2.UP * gun_alcance
 			"Down":
-				direction = Vector2.DOWN * gun_alcance
-
-	ray2d.cast_to = direction.normalized()*gun_alcance - gun.position
-	emit_signal("change_aim", direction, spritedir)
+				cast_to = Vector2.DOWN * gun_alcance
+	ray2d.cast_to = cast_to.normalized()*gun_alcance - gun.position
+	emit_signal("change_aim", cast_to, spritedir)
 	ray2d.position = gun.position
-	draw_aim()
+	draw_aim(cast_to)
 
 
-func draw_aim():
+func draw_aim(cast_to: Vector2):
 	if aim_line.get_point_count() == 0:
 		aim_line.add_point(gun.position)
-		aim_line.add_point(direction.normalized()*gun_alcance)
+		aim_line.add_point(cast_to.normalized()*gun_alcance)
 	else:
 		aim_line.clear_points()
 		aim_line.add_point(gun.position)
-		aim_line.add_point(direction.normalized()*gun_alcance)
+		aim_line.add_point(cast_to.normalized()*gun_alcance)
 
 func anim_dir():
-	match direction:
+	var to: Vector2
+	if is_aiming:
+		to = aim_direction
+	else:
+		to = direction
+	match to:
 		Vector2.RIGHT:
 			spritedir = "Right"
 		Vector2.LEFT:
@@ -125,11 +146,16 @@ func anim_dir():
 			spritedir = "Down"
 		Vector2.UP:
 			spritedir = "Up"
+		Vector2(1, 1):
+			spritedir = "Down"
+		Vector2(-1, -1):
+			spritedir = "Up"
+		Vector2(-1, 1):
+			spritedir = "Down"
+		Vector2(1, -1):
+			spritedir = "Up"
 	#Linea provisional
-	if state_enum.keys()[state] == "Aiming":
-		$anim.play(str("Idle", spritedir))
-	else:
-		$anim.play(str(state_enum.keys()[state], spritedir))
+	$anim.play(str(state_enum.keys()[state], spritedir))
 
 
 func change_state(value: int):
@@ -139,7 +165,6 @@ func change_state(value: int):
 
 func damage_taken(value):
 	knockback_timer.wait_time = float((health - value))/100
-	print("wait time:", knockback_timer.wait_time)
 	knockback_timer.start()
 	change_state(state_enum.Knocked)
 	health = value
