@@ -4,6 +4,7 @@ onready var gunflash_scene = load('res://Objects/gunflash.tscn')
 onready var gun_scene = load('res://Objects/Gun.tscn')
 var gun: Sprite
 
+onready var gun_controller: Node2D = $Gun_controller
 onready var aim_line: Line2D = $aim_line
 onready var ray2d: RayCast2D = $RayCast2D
 onready var knockback_timer: Timer = $knockback_timer
@@ -20,23 +21,25 @@ var speed = 100
 var aim_speed = 2
 var knockback_speed = 200
 var direction = Vector2.ZERO
-var aim_direction = Vector2.ZERO
+var aim_dir = Vector2.ZERO
 var knockdir = Vector2.ZERO
 var spritedir = "Down"
 var state = state_enum.Idle setget change_state
 
-signal change_aim
 signal stop_aim
 #Variables que serán cambiadas porque son propiedades que pertenecen a nodos que aún no existen
 var gun_alcance = 16 * 10
 
 
 func _input(event):
+	if event.is_action_pressed("apuntar"):
+		if is_aiming:
+			stop_aim()
+		else:
+			start_aim()
 	if event.is_action_pressed("disparar"):
-		aim()
-	elif event.is_action_released("disparar"):
-		shoot()
-
+		if is_aiming:
+			shoot()
 
 # Called when the node enters the scene tree for the first time.
 func _physics_process(_delta):
@@ -44,20 +47,13 @@ func _physics_process(_delta):
 		state_enum.Idle, state_enum.Walking:
 			move_control()
 			if is_aiming:
-				raycast_control()
-
+				aim()
 		state_enum.Knocked:
 			knockback()
 
 func control():
 	direction.x = int(Input.is_action_pressed("derecha")) - int(Input.is_action_pressed("izquierda"))
 	direction.y = int(Input.is_action_pressed("abajo")) - int(Input.is_action_pressed("arriba"))
-	anim_dir()
-
-
-func aim_control():
-	aim_direction.x = int(Input.is_action_pressed("ui_right")) - int(Input.is_action_pressed("ui_left"))
-	aim_direction.y = int(Input.is_action_pressed("ui_down")) - int(Input.is_action_pressed("ui_up"))
 	anim_dir()
 
 
@@ -70,97 +66,88 @@ func move_control():
 	move_and_slide(direction.normalized() * speed)
 
 
-func aim():
-	is_aiming = true
+func start_aim():
 	speed = speed/aim_speed
+	is_aiming = true
 	gun = gun_scene.instance()
-	raycast_control()
-	add_child(gun)
-	connect("change_aim", gun, "change_aim")
+	gun_controller.add_child(gun)
 	connect("stop_aim", gun, "die")
 
 
+func aim():
+	print(gun.position)
+	aim_dir = get_global_mouse_position() - global_position
+	gun_controller.rotation = aim_dir.angle()
+	if abs(gun_controller.rotation) >= PI/2:
+		gun.flip_v = true
+	else:
+		gun.flip_v = false
+	raycast_cast()
+
+
+func stop_aim():
+	is_aiming = false
+	speed = speed*aim_speed
+	gun_controller.remove_child(gun)
+	aim_line.clear_points()
+	aim_dir = Vector2.ZERO
+	raycast_cast()
+
+
 func shoot():
+	pum.play()
+	var gunflash = gunflash_scene.instance()
+	gun.add_child(gunflash)
 	if ray2d.is_colliding():
-		pum.play()
 		var collider = ray2d.get_collider()
-		if collider.TYPE == "ZOMBIE":
+		if not collider is TileMap and collider.TYPE == "ZOMBIE":
 			collider.health = collider.health - gun.damage
 			collider.knockdir = collider.position - ray2d.get_collision_point()
 			print(collider.position,ray2d.get_collision_point())
-		var gunflash = gunflash_scene.instance()
-		add_child(gunflash)
-	aim_line.clear_points()
-	ray2d.cast_to = Vector2.ZERO
-	is_aiming = false
-	emit_signal("stop_aim")
-	speed = speed*aim_speed
-
-func raycast_control():
-	if is_aiming:
-		aim_control()
-		raycast_cast(aim_direction)
-	else:
-		control()
 
 
-
-func raycast_cast(cast_to: Vector2):
-	if cast_to == Vector2.ZERO:
-		match spritedir:
-			"Left":
-				cast_to = Vector2.LEFT * gun_alcance
-			"Right":
-				cast_to = Vector2.RIGHT * gun_alcance
-			"Up":
-				cast_to = Vector2.UP * gun_alcance
-			"Down":
-				cast_to = Vector2.DOWN * gun_alcance
-	ray2d.cast_to = cast_to.normalized()*gun_alcance - gun.position
-	emit_signal("change_aim", cast_to, spritedir)
+func raycast_cast():
+	ray2d.cast_to = aim_dir.normalized()*gun_alcance - gun.position
 	ray2d.position = gun.position
-	draw_aim(cast_to)
+	draw_aim(aim_dir)
+
 
 
 func draw_aim(cast_to: Vector2):
 	if aim_line.get_point_count() == 0:
-		aim_line.add_point(gun.position)
+		aim_line.add_point(gun_controller.position)
 		aim_line.add_point(cast_to.normalized()*gun_alcance)
 	else:
 		aim_line.clear_points()
-		aim_line.add_point(gun.position)
+		aim_line.add_point(gun_controller.position)
 		aim_line.add_point(cast_to.normalized()*gun_alcance)
 
 func anim_dir():
 	var to: Vector2
 	if is_aiming:
-		to = aim_direction
+		to = aim_dir
 	else:
 		to = direction
-	match to:
-		Vector2.RIGHT:
-			spritedir = "Right"
-		Vector2.LEFT:
+	var dir_angle = rad2deg(to.angle())
+	var rounded_angle = int(round(dir_angle/45)*45)
+	match rounded_angle:
+		0:
+		   spritedir = "Right"
+		-45, -90, -135:
+			spritedir = "Up"
+		180, -180:
 			spritedir = "Left"
-		Vector2.DOWN:
+		135, 90, 45:
 			spritedir = "Down"
-		Vector2.UP:
-			spritedir = "Up"
-		Vector2(1, 1):
-			spritedir = "Down"
-		Vector2(-1, -1):
-			spritedir = "Up"
-		Vector2(-1, 1):
-			spritedir = "Down"
-		Vector2(1, -1):
-			spritedir = "Up"
+		
 	#Linea provisional
 	$anim.play(str(state_enum.keys()[state], spritedir))
 
 
+
 func change_state(value: int):
 	state = value
-	print("Nuevo estado: ", state_enum.keys()[state])
+	#print("Nuevo estado: ", state_enum.keys()[state])
 
 
 func damage_taken(value):

@@ -4,7 +4,7 @@
 [ext_resource path="res://Objects/Gun.gd" type="Script" id=2]
 
 [node name="Gun" type="Sprite"]
-z_index = -1
 texture = ExtResource( 1 )
+offset = Vector2( 8, 0 )
 hframes = 4
 script = ExtResource( 2 )
