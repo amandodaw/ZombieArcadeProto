@@ -84,7 +84,7 @@ func shoot():
 	if ray2d.is_colliding():
 		pum.play()
 		var collider = ray2d.get_collider()
-		if collider.TYPE == "ZOMBIE":
+		if not collider is TileMap and collider.TYPE == "ZOMBIE":
 			collider.health = collider.health - gun.damage
 			collider.knockdir = collider.position - ray2d.get_collision_point()
 			print(collider.position,ray2d.get_collision_point())

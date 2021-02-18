@@ -89,6 +89,6 @@ func _on_knockdown_timer_timeout():
 
 func _on_hitbox_body_entered(body):
 	print("si", body.get_name())
-	if body.TYPE == "PLAYER":
+	if not body is TileMap and body.TYPE == "PLAYER":
 		body.health -= damage
 		body.knockdir = body.position - position
