@@ -1,8 +1,9 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Sprites/Player-Sheet.png" type="Texture" id=1]
 [ext_resource path="res://Player/Player.gd" type="Script" id=2]
 [ext_resource path="res://gunshot_effect.wav" type="AudioStream" id=3]
+[ext_resource path="res://Sprites/spot.png" type="Texture" id=4]
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 6.01399
@@ -136,7 +137,11 @@ tracks/0/keys = {
 "values": [ 9, 10, 9, 11 ]
 }
 
+[sub_resource type="OccluderPolygon2D" id=10]
+polygon = PoolVector2Array( -3.797, -8.30869, -4.24295, 6.11044, 3.7842, 5.81314, 3.93285, -7.11949 )
+
 [node name="Player" type="KinematicBody2D"]
+show_behind_parent = true
 collision_layer = 3
 script = ExtResource( 2 )
 
@@ -170,4 +175,10 @@ one_shot = true
 
 [node name="pum" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource( 3 )
+
+[node name="Light2D" type="Light2D" parent="."]
+texture = ExtResource( 4 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+occluder = SubResource( 10 )
 [connection signal="timeout" from="knockback_timer" to="." method="_on_knockback_timer_timeout"]

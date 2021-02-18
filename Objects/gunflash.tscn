@@ -6,7 +6,8 @@
 [node name="gunflash" type="Light2D"]
 texture = ExtResource( 1 )
 color = Color( 0.905882, 0.839216, 0.478431, 0.843137 )
-energy = 3.0
+energy = 2.0
+range_layer_max = 100
 shadow_enabled = true
 script = ExtResource( 2 )
 
