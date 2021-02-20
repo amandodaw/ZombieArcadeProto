@@ -2,6 +2,7 @@ extends KinematicBody2D
 
 onready var gunflash_scene = load('res://Objects/gunflash.tscn')
 onready var gun_scene = load('res://Objects/Gun.tscn')
+onready var blood_scene = load('res://Objects/blood.tscn')
 var gun: Sprite
 
 onready var gun_controller: Node2D = $Gun_controller
@@ -10,7 +11,7 @@ onready var ray2d: RayCast2D = $RayCast2D
 onready var knockback_timer: Timer = $knockback_timer
 onready var pum: AudioStreamPlayer2D = $pum
 
-enum state_enum { Idle, Walking, Knocked }
+enum state_enum { Idle, Walking, Knocked, Shooting }
 
 var is_aiming: bool = false
 
@@ -25,8 +26,10 @@ var aim_dir = Vector2.ZERO
 var knockdir = Vector2.ZERO
 var spritedir = "Down"
 var state = state_enum.Idle setget change_state
+var time_survived = 0
 
 signal stop_aim
+signal shoot
 #Variables que serán cambiadas porque son propiedades que pertenecen a nodos que aún no existen
 var gun_alcance = 16 * 10
 
@@ -50,11 +53,17 @@ func _physics_process(_delta):
 				aim()
 		state_enum.Knocked:
 			knockback()
+		state_enum.Shooting:
+			anim_dir()
 
 func control():
 	direction.x = int(Input.is_action_pressed("derecha")) - int(Input.is_action_pressed("izquierda"))
 	direction.y = int(Input.is_action_pressed("abajo")) - int(Input.is_action_pressed("arriba"))
 	anim_dir()
+
+
+func aim_control():
+	aim_dir = Vector2(Input.get_joy_axis ( 0,JOY_AXIS_2 ), Input.get_joy_axis ( 0,JOY_AXIS_3 ))
 
 
 func move_control():
@@ -72,10 +81,11 @@ func start_aim():
 	gun = gun_scene.instance()
 	gun_controller.add_child(gun)
 	connect("stop_aim", gun, "die")
+	connect("shoot", gun, "shoot")
 
 
 func aim():
-	print(gun.position)
+	#aim_control()
 	aim_dir = get_global_mouse_position() - global_position
 	gun_controller.rotation = aim_dir.angle()
 	if abs(gun_controller.rotation) >= PI/2:
@@ -86,24 +96,27 @@ func aim():
 
 
 func stop_aim():
+	if state == state_enum.Shooting:
+		return
 	is_aiming = false
 	speed = speed*aim_speed
 	gun_controller.remove_child(gun)
 	aim_line.clear_points()
-	aim_dir = Vector2.ZERO
-	raycast_cast()
 
 
 func shoot():
-	pum.play()
+	emit_signal("shoot")
+	change_state(state_enum.Shooting)
 	var gunflash = gunflash_scene.instance()
 	gun.add_child(gunflash)
 	if ray2d.is_colliding():
 		var collider = ray2d.get_collider()
 		if not collider is TileMap and collider.TYPE == "ZOMBIE":
+			var blood = blood_scene.instance()
+			collider.add_child(blood)
 			collider.health = collider.health - gun.damage
 			collider.knockdir = collider.position - ray2d.get_collision_point()
-			print(collider.position,ray2d.get_collision_point())
+			
 
 
 func raycast_cast():
@@ -141,12 +154,16 @@ func anim_dir():
 			spritedir = "Down"
 		
 	#Linea provisional
-	$anim.play(str(state_enum.keys()[state], spritedir))
+	if state == state_enum.Shooting:
+		$anim.play(str("Idle", spritedir))
+	else:
+		$anim.play(str(state_enum.keys()[state], spritedir))
 
 
 
 func change_state(value: int):
 	state = value
+	print(state_enum.keys()[state])
 	#print("Nuevo estado: ", state_enum.keys()[state])
 
 
@@ -156,6 +173,7 @@ func damage_taken(value):
 	change_state(state_enum.Knocked)
 	health = value
 	if health <= 0:
+		get_parent().game_over()
 		queue_free()
 
 
@@ -165,3 +183,8 @@ func knockback():
 
 func _on_knockback_timer_timeout():
 	change_state(state_enum.Idle)
+
+
+func _on_Timer_timeout():
+	time_survived += 1
+	$Label.text = str("Segundos \nsobrevividos: ",time_survived)

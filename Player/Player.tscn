@@ -1,8 +1,7 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Sprites/Player-Sheet.png" type="Texture" id=1]
 [ext_resource path="res://Player/Player.gd" type="Script" id=2]
-[ext_resource path="res://gunshot_effect.wav" type="AudioStream" id=3]
 [ext_resource path="res://Sprites/spot.png" type="Texture" id=4]
 [ext_resource path="res://Objects/aim_line.tscn" type="PackedScene" id=5]
 
@@ -139,6 +138,7 @@ tracks/0/keys = {
 }
 
 [sub_resource type="OccluderPolygon2D" id=10]
+cull_mode = 2
 polygon = PoolVector2Array( -3.797, -8.30869, -4.24295, 6.11044, 3.7842, 5.81314, 3.93285, -7.11949 )
 
 [node name="Player" type="KinematicBody2D"]
@@ -174,9 +174,6 @@ width = 0.5
 [node name="knockback_timer" type="Timer" parent="."]
 one_shot = true
 
-[node name="pum" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource( 3 )
-
 [node name="Light2D" type="Light2D" parent="."]
 texture = ExtResource( 4 )
 
@@ -184,4 +181,18 @@ texture = ExtResource( 4 )
 occluder = SubResource( 10 )
 
 [node name="Gun_controller" type="Node2D" parent="."]
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true
+
+[node name="Label" type="Label" parent="."]
+margin_left = -40.4331
+margin_top = -43.5547
+margin_right = -0.433052
+margin_bottom = -29.5547
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="timeout" from="knockback_timer" to="." method="_on_knockback_timer_timeout"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

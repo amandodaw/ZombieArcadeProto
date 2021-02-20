@@ -3,11 +3,12 @@ extends KinematicBody2D
 enum state_enum { Idle, Walking, Chasing, Knocked }
 
 onready var knockback_timer = $knockback_timer
+onready var growl_1 = $growl_1
 
 const TYPE = "ZOMBIE"
 
 var health = 50 setget damage_taken
-var speed = 50
+var speed = 25
 var knockback_speed = 200
 var damage = 20
 
@@ -69,6 +70,7 @@ func knockback():
 
 func _on_vision_body_entered(body):
 	if body.TYPE == "PLAYER":
+		growl_1.play()
 		objective = body
 		change_state(state_enum.Chasing)
 

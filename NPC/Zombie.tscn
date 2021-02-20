@@ -1,7 +1,8 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://NPC/Zombie.gd" type="Script" id=1]
 [ext_resource path="res://Sprites/zombie-Sheet.png" type="Texture" id=2]
+[ext_resource path="res://Sounds/zombie_growl_1.wav" type="AudioStream" id=3]
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 6.01399
@@ -138,6 +139,10 @@ tracks/0/keys = {
 [sub_resource type="CircleShape2D" id=10]
 radius = 80.0
 
+[sub_resource type="OccluderPolygon2D" id=11]
+cull_mode = 2
+polygon = PoolVector2Array( -2.68724, -6.05643, -2.68724, 5.2538, 3.36473, 5.15459, 3.16631, -6.05643 )
+
 [node name="Zombie" type="KinematicBody2D"]
 script = ExtResource( 1 )
 
@@ -174,6 +179,15 @@ one_shot = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox"]
 scale = Vector2( 1.25, 1.25 )
 shape = SubResource( 1 )
+
+[node name="growl_1" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 3 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+modulate = Color( 1, 1, 1, 0.47451 )
+self_modulate = Color( 1, 1, 1, 0 )
+show_behind_parent = true
+occluder = SubResource( 11 )
 [connection signal="body_entered" from="vision" to="." method="_on_vision_body_entered"]
 [connection signal="body_exited" from="vision" to="." method="_on_vision_body_exited"]
 [connection signal="timeout" from="knockback_timer" to="." method="_on_knockdown_timer_timeout"]
