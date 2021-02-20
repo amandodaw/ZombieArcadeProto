@@ -33,15 +33,18 @@ func _physics_process(_delta):
 
 
 func anim_dir():
-	match direction:
-		Vector2.RIGHT:
-			spritedir = "Right"
-		Vector2.LEFT:
-			spritedir = "Left"
-		Vector2.DOWN:
-			spritedir = "Down"
-		Vector2.UP:
+	var dir_angle = rad2deg(direction.angle())
+	var rounded_angle = int(round(dir_angle/45)*45)
+	match rounded_angle:
+		0:
+		   spritedir = "Right"
+		-45, -90, -135:
 			spritedir = "Up"
+		180, -180:
+			spritedir = "Left"
+		135, 90, 45:
+			spritedir = "Down"
+
 	if state_enum.keys()[state] == "Chasing":
 		$anim.play(str("Walking", spritedir))
 	else:

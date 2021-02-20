@@ -6,6 +6,7 @@ signal finished
 onready var gun_owner = get_parent().get_parent()
 
 func shoot():
+	$gunshot.play()
 	if flip_v:
 		$anim.play("ShootLeft")
 	else:

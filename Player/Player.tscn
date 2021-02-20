@@ -138,8 +138,7 @@ tracks/0/keys = {
 }
 
 [sub_resource type="OccluderPolygon2D" id=10]
-cull_mode = 2
-polygon = PoolVector2Array( -3.797, -8.30869, -4.24295, 6.11044, 3.7842, 5.81314, 3.93285, -7.11949 )
+polygon = PoolVector2Array( -2.60784, -6.37623, -4.39165, -5.03837, -4.68895, 2.39417, -2.75649, 5.21854, 2.29764, 5.06989, 4.37875, 2.54282, 4.08145, -5.33568, 1.85168, -6.52488 )
 
 [node name="Player" type="KinematicBody2D"]
 show_behind_parent = true
@@ -176,23 +175,13 @@ one_shot = true
 
 [node name="Light2D" type="Light2D" parent="."]
 texture = ExtResource( 4 )
+shadow_gradient_length = 1913.7
+shadow_item_cull_mask = 3
 
 [node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+light_mask = 2
 occluder = SubResource( 10 )
+light_mask = 2
 
 [node name="Gun_controller" type="Node2D" parent="."]
-
-[node name="Timer" type="Timer" parent="."]
-autostart = true
-
-[node name="Label" type="Label" parent="."]
-margin_left = -40.4331
-margin_top = -43.5547
-margin_right = -0.433052
-margin_bottom = -29.5547
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 [connection signal="timeout" from="knockback_timer" to="." method="_on_knockback_timer_timeout"]
-[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

@@ -187,7 +187,9 @@ stream = ExtResource( 3 )
 modulate = Color( 1, 1, 1, 0.47451 )
 self_modulate = Color( 1, 1, 1, 0 )
 show_behind_parent = true
+light_mask = 3
 occluder = SubResource( 11 )
+light_mask = 3
 [connection signal="body_entered" from="vision" to="." method="_on_vision_body_entered"]
 [connection signal="body_exited" from="vision" to="." method="_on_vision_body_exited"]
 [connection signal="timeout" from="knockback_timer" to="." method="_on_knockdown_timer_timeout"]

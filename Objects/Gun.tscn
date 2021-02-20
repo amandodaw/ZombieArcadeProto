@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Sprites/pistola-Sheet.png" type="Texture" id=1]
 [ext_resource path="res://Objects/Gun.gd" type="Script" id=2]
+[ext_resource path="res://Sounds/gun_shoot.wav" type="AudioStream" id=3]
+[ext_resource path="res://Sprites/flashlight.png" type="Texture" id=4]
 
 [sub_resource type="Animation" id=1]
 resource_name = "ShootLeft"
@@ -68,4 +70,12 @@ script = ExtResource( 2 )
 [node name="anim" type="AnimationPlayer" parent="."]
 anims/ShootLeft = SubResource( 1 )
 anims/ShootRight = SubResource( 2 )
+
+[node name="gunshot" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 3 )
+
+[node name="Light2D" type="Light2D" parent="."]
+texture = ExtResource( 4 )
+offset = Vector2( 96, 0 )
+shadow_enabled = true
 [connection signal="animation_finished" from="anim" to="." method="_on_anim_animation_finished"]

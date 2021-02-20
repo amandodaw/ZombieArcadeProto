@@ -14,6 +14,7 @@ var rng:= RandomNumberGenerator.new()
 
 
 var zombie_number = 1
+var zombie_max_number = 3
 
 func _ready():
 	print(map_size)
@@ -43,8 +44,10 @@ func spawn_zombies():
 		var rand_pos  = Vector2(rng.randi_range(1,map_size.x-1), rng.randi_range(1,map_size.y-1))
 		zombie.position = tilemap.map_to_world(rand_pos)
 		add_child(zombie)
-	if zombie_number < 5:
+	if zombie_number < zombie_max_number:
 		zombie_number += 1
+	else:
+		zombie_number = 0
 
 func game_over():
 	get_tree().change_scene('res://World/menu.tscn')

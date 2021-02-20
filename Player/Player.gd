@@ -14,6 +14,7 @@ onready var pum: AudioStreamPlayer2D = $pum
 enum state_enum { Idle, Walking, Knocked, Shooting }
 
 var is_aiming: bool = false
+var is_stopping_aim: bool = false
 
 const TYPE = "PLAYER"
 
@@ -97,7 +98,9 @@ func aim():
 
 func stop_aim():
 	if state == state_enum.Shooting:
+		is_stopping_aim = true
 		return
+	is_stopping_aim = false
 	is_aiming = false
 	speed = speed*aim_speed
 	gun_controller.remove_child(gun)
@@ -105,6 +108,8 @@ func stop_aim():
 
 
 func shoot():
+	if state == state_enum.Shooting:
+		return
 	emit_signal("shoot")
 	change_state(state_enum.Shooting)
 	var gunflash = gunflash_scene.instance()
@@ -163,7 +168,8 @@ func anim_dir():
 
 func change_state(value: int):
 	state = value
-	print(state_enum.keys()[state])
+	if is_stopping_aim:
+		stop_aim()
 	#print("Nuevo estado: ", state_enum.keys()[state])
 
 
@@ -183,8 +189,3 @@ func knockback():
 
 func _on_knockback_timer_timeout():
 	change_state(state_enum.Idle)
-
-
-func _on_Timer_timeout():
-	time_survived += 1
-	$Label.text = str("Segundos \nsobrevividos: ",time_survived)
