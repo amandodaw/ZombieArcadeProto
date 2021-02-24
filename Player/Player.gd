@@ -7,7 +7,6 @@ var gun: Sprite # Preparar variable (futura arma recogida)
 
 onready var gun_controller: Node2D = $Gun_controller # Nodo de referencia rotacion arma
 onready var aim_line: Line2D = $aim_line # Línea de apuntado (¿Sustituír por sprite?)
-onready var ray2d: RayCast2D = $RayCast2D # Raycast de disparo
 onready var knockback_timer: Timer = $knockback_timer # Cronómetro duración knockback
 
 enum state_enum { Idle, Walking, Knocked, Shooting, Reloading } # Enum de los distintos estados
@@ -45,13 +44,12 @@ func _input(event):
 		if is_aiming:
 			shoot()
 	if event.is_action_pressed("recargar"):
-		$reload_timer.start()
-		state = state_enum.Reloading
-		gun.reload_player.play()
+		reload()
 	if event.is_action_released("recargar"):
-		if $reload_timer.is_stopped():
+		if state == state_enum.Reloading:
+			if !$reload_timer.is_stopped():
+				$reload_timer.stop()
 			state = state_enum.Idle
-			
 
 
 func _physics_process(_delta):
@@ -62,12 +60,11 @@ func _physics_process(_delta):
 				aim()
 		state_enum.Knocked:
 			knockback()
-		state_enum.Shooting:
+		state_enum.Shooting, state_enum.Reloading:
+			aim()
 			anim_dir()
 			#control()
 			#move_and_slide(direction.normalized() * speed)
-		state_enum.Reloading:
-			pass
 
 
 func control():
@@ -117,7 +114,7 @@ func aim():
 		gun.flip_v = true
 	else:
 		gun.flip_v = false
-	raycast_cast()
+	gun.raycast_cast()
 
 
 func stop_aim():
@@ -139,24 +136,17 @@ func shoot():
 	# Evitar la ejecución si ya se está disparando
 	if state == state_enum.Shooting:
 		return
-	emit_signal("shoot") # Esto provocará que la pistola reproduzca la animación
 	change_state(state_enum.Shooting)
-	# Si el disparo ha acertado:
-	if ray2d.is_colliding():
-		var collider = ray2d.get_collider()
-		# Y es del tipo zombie 
-		if not collider is TileMap and not collider is StaticBody2D and collider.TYPE == "ZOMBIE":
-			# Hacer el daño según la variable del arma equipada
-			collider.health = collider.health - gun.damage
-			# Enviar la dirección del disparo para dirigir el knockback
-			collider.knockdir = collider.position - ray2d.get_collision_point()
+	emit_signal("shoot") # Esto provocará que la pistola reproduzca la animación
 
 
-func raycast_cast():
-	# Función bucle para castear el rayo al lugar apuntado
-	ray2d.cast_to = aim_dir.normalized()*gun.gun_alcance - gun.position
-	ray2d.global_position = gun.global_position
-	draw_aim(aim_dir)
+func reload():
+	if is_aiming and ammo_packs > 0:
+		$reload_timer.start()
+		state = state_enum.Reloading
+		gun.reload_player.play()
+	else:
+		print("No tienes arma/munición")
 
 
 func draw_aim(cast_to: Vector2):
@@ -197,7 +187,7 @@ func anim_dir():
 		135, 90, 45:
 			spritedir = "Down"
 	# Reproducimos la animación
-	if state == state_enum.Shooting:
+	if state == state_enum.Shooting or state == state_enum.Reloading:
 		$anim.play(str("Idle", spritedir))
 	else:
 		$anim.play(str(state_enum.keys()[state], spritedir))
@@ -239,3 +229,4 @@ func _on_reload_timer_timeout():
 	print("hey!")
 	gun.ammo_loaded = 7
 	ammo_packs -= 1
+	change_state(state_enum.Idle)

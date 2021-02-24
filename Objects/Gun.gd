@@ -2,6 +2,7 @@ extends Sprite
 
 onready var gunflash_scene = load('res://Objects/gunflash.tscn') # Cargar efecto disparo
 
+onready var ray2d = $ray2d
 onready var reload_player = $reload
 
 var damage = 10 # Daño del arma
@@ -16,7 +17,10 @@ onready var gun_owner = get_parent().get_parent() # El nodo entidad padre del ar
 func shoot():
 	if ammo_loaded == 0:
 		$dryshot.play()
+		gun_owner.state = gun_owner.state_enum.Idle
+		print("HE LLEGADO AQUI :", gun_owner.state)
 		return
+	ammo_loaded -= 1
 	# Esta función crea un hijo efecto de disparo
 	var gunflash = gunflash_scene.instance()
 	add_child(gunflash)
@@ -26,6 +30,21 @@ func shoot():
 		$anim.play("ShootLeft")
 	else:
 		$anim.play("ShootRight")
+	# Si el disparo ha acertado:
+	if ray2d.is_colliding():
+		var collider = ray2d.get_collider()
+		# Y es del tipo zombie 
+		if not collider is TileMap and not collider is StaticBody2D and collider.TYPE == "ZOMBIE":
+			# Hacer el daño según la variable del arma equipada
+			collider.health = collider.health - damage
+			# Enviar la dirección del disparo para dirigir el knockback
+			collider.knockdir = collider.position - ray2d.get_collision_point()
+
+
+func raycast_cast():
+	# Función bucle para castear el rayo al lugar apuntado
+	ray2d.cast_to = Vector2.RIGHT*gun_alcance
+
 
 func die():
 	queue_free()
@@ -44,6 +63,7 @@ func _on_pickbox_body_entered(body):
 		if body.TYPE == "PLAYER":
 			$pickbox/CollisionShape2D.disabled = true
 			$Light2D.enabled = true
+			ray2d.enabled = true
 			position = Vector2(8,0)
 			body.gun = duplicate()
 			queue_free()

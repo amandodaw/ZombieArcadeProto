@@ -47,7 +47,7 @@ func spawn_zombies():
 	for i in zombie_number:
 		var zombie = zombie_scene.instance()
 		var rand_pos  = Vector2(rng.randi_range(1,map_size.x-1), rng.randi_range(1,map_size.y-1))
-		zombie.position = tilemap.map_to_world(rand_pos)
+		zombie.position = tilemap.map_to_world(rand_pos)+half_cell_size
 		add_child(zombie)
 	if zombie_number < zombie_max_number:
 		zombie_number += 1

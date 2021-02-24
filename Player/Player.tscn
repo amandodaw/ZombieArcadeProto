@@ -164,9 +164,6 @@ anims/WalkingLeft = SubResource( 7 )
 anims/WalkingRight = SubResource( 8 )
 anims/WalkingUp = SubResource( 9 )
 
-[node name="RayCast2D" type="RayCast2D" parent="."]
-enabled = true
-
 [node name="aim_line" parent="." instance=ExtResource( 5 )]
 visible = false
 z_index = -1
