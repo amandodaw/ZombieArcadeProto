@@ -138,6 +138,7 @@ tracks/0/keys = {
 }
 
 [sub_resource type="OccluderPolygon2D" id=10]
+cull_mode = 2
 polygon = PoolVector2Array( -2.60784, -6.37623, -4.39165, -5.03837, -4.68895, 2.39417, -2.75649, 5.21854, 2.29764, 5.06989, 4.37875, 2.54282, 4.08145, -5.33568, 1.85168, -6.52488 )
 
 [node name="Player" type="KinematicBody2D"]
@@ -186,4 +187,8 @@ occluder = SubResource( 10 )
 light_mask = 2
 
 [node name="Gun_controller" type="Node2D" parent="."]
+
+[node name="reload_timer" type="Timer" parent="."]
+one_shot = true
 [connection signal="timeout" from="knockback_timer" to="." method="_on_knockback_timer_timeout"]
+[connection signal="timeout" from="reload_timer" to="." method="_on_reload_timer_timeout"]

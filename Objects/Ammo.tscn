@@ -1,0 +1,50 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Sprites/ammo.png" type="Texture" id=1]
+[ext_resource path="res://Objects/Ammo.gd" type="Script" id=2]
+
+[sub_resource type="Animation" id=1]
+resource_name = "CheckAmmo"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ 0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 8, 0 ), Vector2( 8, 4 ) ]
+}
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 1.2167, 2.8157 )
+
+[node name="Ammo" type="Sprite"]
+position = Vector2( 8, 0 )
+texture = ExtResource( 1 )
+script = ExtResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/CheckAmmo = SubResource( 1 )
+
+[node name="pickbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="pickbox"]
+position = Vector2( -6, 1.375 )
+shape = SubResource( 2 )
+[connection signal="body_entered" from="pickbox" to="." method="_on_pickbox_body_entered"]
