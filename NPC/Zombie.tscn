@@ -1,12 +1,12 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://NPC/Zombie.gd" type="Script" id=1]
 [ext_resource path="res://Sprites/zombie-Sheet.png" type="Texture" id=2]
 [ext_resource path="res://Sounds/zombie_growl_1.wav" type="AudioStream" id=3]
 
 [sub_resource type="CapsuleShape2D" id=1]
-radius = 6.01399
-height = 3.64005
+radius = 5.44796
+height = 5.18564
 
 [sub_resource type="Animation" id=2]
 resource_name = "IdleDown"
@@ -139,6 +139,10 @@ tracks/0/keys = {
 [sub_resource type="CircleShape2D" id=10]
 radius = 80.0
 
+[sub_resource type="CapsuleShape2D" id=12]
+radius = 6.34088
+height = 1.81242
+
 [sub_resource type="OccluderPolygon2D" id=11]
 cull_mode = 2
 polygon = PoolVector2Array( -2.68724, -6.05643, -2.68724, 5.2538, 3.36473, 5.15459, 3.16631, -6.05643 )
@@ -169,6 +173,7 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="vision"]
+position = Vector2( 0.297634, -0.198425 )
 shape = SubResource( 10 )
 
 [node name="knockback_timer" type="Timer" parent="."]
@@ -178,8 +183,8 @@ one_shot = true
 [node name="hitbox" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox"]
-scale = Vector2( 1.25, 1.25 )
-shape = SubResource( 1 )
+z_index = 1
+shape = SubResource( 12 )
 
 [node name="growl_1" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource( 3 )

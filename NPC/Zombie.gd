@@ -109,6 +109,6 @@ func _on_knockdown_timer_timeout():
 func _on_hitbox_body_entered(body):
 	# Función para inflingir daño si el jugador entra en el hitbox
 	print("si", body.get_name())
-	if not body is TileMap and body.TYPE == "PLAYER":
+	if not body is TileMap and not body is StaticBody2D and body.TYPE == "PLAYER":
 		body.health -= damage
 		body.knockdir = body.position - position
