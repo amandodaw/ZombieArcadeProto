@@ -1,6 +1,7 @@
 extends KinematicBody2D
 
 onready var blood_scene = load('res://Objects/blood.tscn') # Cargar particula sangre (¿Debería ser aquí?)
+onready var ammo_scene = load('res://Objects/Ammo.tscn')
 
 enum state_enum { Idle, Walking, Chasing, Knocked } # Enum de los distintos estados
 
@@ -112,3 +113,9 @@ func _on_hitbox_body_entered(body):
 	if not body is TileMap and not body is StaticBody2D and body.TYPE == "PLAYER":
 		body.health -= damage
 		body.knockdir = body.position - position
+
+
+func _on_Zombie_tree_exiting():
+	var ammo_pack = ammo_scene.instance()
+	ammo_pack.global_position = global_position
+	get_parent().add_child(ammo_pack)

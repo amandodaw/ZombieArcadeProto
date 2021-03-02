@@ -139,11 +139,11 @@ tracks/0/keys = {
 [sub_resource type="CircleShape2D" id=10]
 radius = 80.0
 
-[sub_resource type="CapsuleShape2D" id=12]
+[sub_resource type="CapsuleShape2D" id=11]
 radius = 6.34088
 height = 1.81242
 
-[sub_resource type="OccluderPolygon2D" id=11]
+[sub_resource type="OccluderPolygon2D" id=12]
 cull_mode = 2
 polygon = PoolVector2Array( -2.68724, -6.05643, -2.68724, 5.2538, 3.36473, 5.15459, 3.16631, -6.05643 )
 
@@ -184,7 +184,7 @@ one_shot = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox"]
 z_index = 1
-shape = SubResource( 12 )
+shape = SubResource( 11 )
 
 [node name="growl_1" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource( 3 )
@@ -194,8 +194,9 @@ modulate = Color( 1, 1, 1, 0.47451 )
 self_modulate = Color( 1, 1, 1, 0 )
 show_behind_parent = true
 light_mask = 3
-occluder = SubResource( 11 )
+occluder = SubResource( 12 )
 light_mask = 3
+[connection signal="tree_exiting" from="." to="." method="_on_Zombie_tree_exiting"]
 [connection signal="body_entered" from="vision" to="." method="_on_vision_body_entered"]
 [connection signal="body_exited" from="vision" to="." method="_on_vision_body_exited"]
 [connection signal="timeout" from="knockback_timer" to="." method="_on_knockdown_timer_timeout"]

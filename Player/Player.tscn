@@ -143,6 +143,7 @@ polygon = PoolVector2Array( -2.60784, -6.37623, -4.39165, -5.03837, -4.68895, 2.
 
 [node name="Player" type="KinematicBody2D"]
 show_behind_parent = true
+light_mask = 4
 z_index = 1
 collision_layer = 3
 script = ExtResource( 2 )
@@ -172,19 +173,20 @@ width = 0.5
 wait_time = 0.5
 one_shot = true
 
-[node name="Light2D" type="Light2D" parent="."]
-texture = ExtResource( 4 )
-shadow_gradient_length = 1913.7
-shadow_item_cull_mask = 3
-
 [node name="LightOccluder2D" type="LightOccluder2D" parent="."]
-light_mask = 2
+light_mask = 4
 occluder = SubResource( 10 )
-light_mask = 2
+light_mask = 4
 
 [node name="Gun_controller" type="Node2D" parent="."]
 
 [node name="reload_timer" type="Timer" parent="."]
 one_shot = true
+
+[node name="Light2D" type="Light2D" parent="."]
+texture = ExtResource( 4 )
+range_item_cull_mask = 5
+shadow_enabled = true
+shadow_item_cull_mask = 3
 [connection signal="timeout" from="knockback_timer" to="." method="_on_knockback_timer_timeout"]
 [connection signal="timeout" from="reload_timer" to="." method="_on_reload_timer_timeout"]

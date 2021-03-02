@@ -4,6 +4,7 @@ onready var menu_scene = load('res://World/menu.tscn')  #Cargar escena de men�
 onready var zombie_scene = load('res://NPC/Zombie.tscn')  #Cargar escena de zombie
 
 onready var tilemap: TileMap = $TileMap  #Cargar variable TileMap 
+onready var tilemap2: TileMap = $TileMap2
 
 onready var player := $Player  #Cargar variable jugador
 
@@ -14,6 +15,7 @@ onready var half_cell_size = tilemap.cell_size / tilemap.cell_size * 2
 
 var rng := RandomNumberGenerator.new()
 
+var house_size = Vector2(12,6)
 var zombie_number = 1  #N�mero de zombies a invocar
 var zombie_max_number = 3
 
@@ -24,6 +26,8 @@ func _ready():
 	rng.randomize()
 	generate_border()
 	generate_inner()
+	generate_house(Vector2(5,5))
+	tilemap2.add_occluders()
 
 
 func generate_border():
@@ -41,6 +45,18 @@ func generate_inner():
 	for x in range(1, map_size.x):
 		for y in range(1, map_size.y):
 			tilemap.set_cell(x, y, 0)
+
+
+func generate_house(start: Vector2):
+	var end = start + house_size
+	for x in [start.x, end.x]:
+		for y in range(start.y, end.y+1):
+			tilemap2.set_cell(x, y, 0)
+	for y in [start.y, end.y]:
+		for x in range(start.x, end.x):
+			if y == end.y and x == int((start.x + end.x)/2):
+				continue
+			tilemap2.set_cell(x, y, 0)
 
 
 func spawn_zombies():
