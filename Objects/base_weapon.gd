@@ -1,12 +1,12 @@
 extends Sprite
 
-signal finished
-
 
 onready var gun_owner = get_parent().get_parent()
 
-
+var is_picked = false
 var damage: int
+
+signal finished
 
 func shoot():
 	pass
@@ -30,6 +30,9 @@ func picked(body: Node):
 	pass
 
 
+func dropped(pos: Vector2):
+	pass
+
 func _on_anim_animation_finished(anim_name):
 	print(gun_owner)
 	# Si no está apuntando, eliminar el nodo
@@ -45,7 +48,7 @@ func _on_pickbox_area_entered(area):
 		return
 	if body.TYPE == "PLAYER":
 		$Label.visible = true
-		picked(body)
+		#picked(body)
 
 
 func _on_hitbox_area_entered(area):

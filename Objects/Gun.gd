@@ -10,7 +10,7 @@ const TYPE = "WEAPON"
 
 
 var gun_alcance = 16 * 10 #Alcance del arma / Tile * numero de tiles
-var ammo_loaded = 0
+var ammo_loaded: int
 const ammo_max = 7
 
 
@@ -19,7 +19,7 @@ func _ready():
 
 
 func shoot():
-	if ammo_loaded == 0:
+	if ammo_loaded == 0 :
 		$dryshot.play()
 		gun_owner.state = gun_owner.state_enum.Idle
 		print("HE LLEGADO AQUI :", gun_owner.state)
@@ -43,6 +43,7 @@ func shoot():
 
 
 func aim():
+	print(ammo_loaded)
 	# Función bucle para castear el rayo al lugar apuntado
 	ray2d.cast_to = Vector2.RIGHT*gun_alcance
 
@@ -50,9 +51,17 @@ func aim():
 func picked(body: Node):
 	if body.is_aiming:
 		return
+	$Label.visible = false
 	$pickbox/CollisionShape2D.disabled = true
 	$Light2D.enabled = true
 	ray2d.enabled = true
 	position = Vector2(8,0)
 	body.gun = duplicate()
 	queue_free()
+
+
+func dropped(pos: Vector2):
+	$pickbox/CollisionShape2D.disabled = false
+	$Light2D.enabled = false
+	ray2d.enabled = false
+	position = pos

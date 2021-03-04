@@ -103,10 +103,13 @@ shape = SubResource( 3 )
 [node name="ray2d" type="RayCast2D" parent="."]
 
 [node name="Label" type="Label" parent="."]
+visible = false
 margin_left = -24.0814
 margin_top = -40.7304
 margin_right = 41.9186
 margin_bottom = -9.73035
+custom_colors/font_color = Color( 0.843137, 0.196078, 0.196078, 1 )
+custom_colors/font_color_shadow = Color( 0.184314, 0.239216, 0.588235, 1 )
 text = "Pulsa \"e\"
 para coger"
 __meta__ = {

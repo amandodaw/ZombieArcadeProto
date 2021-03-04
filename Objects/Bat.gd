@@ -15,6 +15,7 @@ func ready():
 
 
 func shoot():
+	$hitbox/CollisionPolygon2D.disabled = false
 	$anim.play("Hit")
 	print(position," eh ", global_position)
 
@@ -31,11 +32,25 @@ func picked(body: Node):
 	if body.is_aiming:
 		return
 	gun_owner = body
-	print(gun_owner)
+	$Label.visible = false
 	$pickbox/CollisionPolygon2D.disabled = true
 	position = Vector2(0,0)
 	body.gun = duplicate()
 	queue_free()
+
+
+func dropped(pos: Vector2):
+	$pickbox/CollisionPolygon2D.disabled = false
+	position = pos
+
+
+func _on_anim_animation_finished(anim_name):
+	$hitbox/CollisionPolygon2D.disabled = true
+	# Si no está apuntando, eliminar el nodo
+	if not gun_owner.is_aiming:
+		queue_free()
+	# Cambiar el estado del padre una vez la animación ha terminado
+	gun_owner.state = gun_owner.state_enum.Idle
 
 
 func _on_hitbox_area_entered(area):

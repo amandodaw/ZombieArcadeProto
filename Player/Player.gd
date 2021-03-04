@@ -28,10 +28,12 @@ var state = state_enum.Idle setget change_state # Estado por defecto Idle
 var ammo_packs = 0
 var time_survived = 0 
 
+
 signal stop_aim # Para indicar al arma que sea destruida
 signal shoot # Para indicar al arma que reproduzca su animación
 
 #Variables auxiliares de noob
+
 
 
 func _input(event):
@@ -54,7 +56,16 @@ func _input(event):
 		for body in $hitbox.get_overlapping_bodies():
 			if not body is TileMap and body.TYPE == "DOOR":
 				body.change_frame()
-		print(position)
+	if event.is_action_pressed("accion"):
+		if is_aiming and gun != null:
+			stop_aim()
+			drop_weapon()
+		for area in $hitbox.get_overlapping_areas():
+			var body = area.get_parent()
+			if body.TYPE == "WEAPON":
+				if !is_aiming and gun != null:
+					drop_weapon()
+				body.picked(self)
 
 
 func _physics_process(_delta):
@@ -153,6 +164,11 @@ func reload():
 	else:
 		print("No tienes arma/munición")
 
+
+func drop_weapon():
+	gun.dropped(position)
+	get_parent().add_child(gun.duplicate())
+	gun = null
 
 func draw_aim(cast_to: Vector2):
 	# Función bucle para dibujar la línea de apuntado 
