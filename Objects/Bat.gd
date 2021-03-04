@@ -11,7 +11,6 @@ const TYPE = "WEAPON"
 
 func ready():
 	damage = 10 # Daño del arma
-	gun_owner = get_parent().get_parent()
 
 
 func shoot():
@@ -35,8 +34,8 @@ func picked(body: Node):
 	$Label.visible = false
 	$pickbox/CollisionPolygon2D.disabled = true
 	position = Vector2(0,0)
-	body.gun = duplicate()
-	queue_free()
+	body.gun = self
+	get_parent().remove_child(self)
 
 
 func dropped(pos: Vector2):

@@ -113,7 +113,7 @@ func start_aim():
 		return
 	speed = speed/aim_speed
 	is_aiming = true
-	#gun = gun_scene.instance()
+	gun.visible = true
 	gun_controller.add_child(gun)
 	connect("stop_aim", gun, "die")
 	connect("shoot", gun, "shoot")
@@ -167,7 +167,9 @@ func reload():
 
 func drop_weapon():
 	gun.dropped(position)
-	get_parent().add_child(gun.duplicate())
+	get_parent().add_child(gun)	
+	disconnect("stop_aim", gun, "die")
+	disconnect("shoot", gun, "shoot")
 	gun = null
 
 func draw_aim(cast_to: Vector2):

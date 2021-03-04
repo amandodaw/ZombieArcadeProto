@@ -186,5 +186,4 @@ occluder = SubResource( 10 )
 [node name="Gun_controller" type="Node2D" parent="."]
 
 [node name="Gun" parent="Gun_controller" instance=ExtResource( 4 )]
-offset = Vector2( 8, 0 )
 [connection signal="timeout" from="knockback_timer" to="." method="_on_knockback_timer_timeout"]

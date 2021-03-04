@@ -19,6 +19,7 @@ func _ready():
 
 
 func shoot():
+	print(get_parent())
 	if ammo_loaded == 0 :
 		$dryshot.play()
 		gun_owner.state = gun_owner.state_enum.Idle
@@ -43,7 +44,6 @@ func shoot():
 
 
 func aim():
-	print(ammo_loaded)
 	# Función bucle para castear el rayo al lugar apuntado
 	ray2d.cast_to = Vector2.RIGHT*gun_alcance
 
@@ -52,12 +52,14 @@ func picked(body: Node):
 	if body.is_aiming:
 		return
 	$Label.visible = false
+	visible = false
 	$pickbox/CollisionShape2D.disabled = true
 	$Light2D.enabled = true
 	ray2d.enabled = true
 	position = Vector2(8,0)
-	body.gun = duplicate()
-	queue_free()
+	body.gun = self
+	gun_owner = body
+	get_parent().remove_child(self)
 
 
 func dropped(pos: Vector2):

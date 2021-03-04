@@ -1,7 +1,7 @@
 extends Sprite
 
 
-onready var gun_owner = get_parent().get_parent()
+onready var gun_owner #= get_parent().get_parent()
 
 var is_picked = false
 var damage: int
