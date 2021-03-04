@@ -2,6 +2,7 @@ extends Node2D
 
 onready var menu_scene = load('res://World/menu.tscn')  #Cargar escena de men� 
 onready var zombie_scene = load('res://NPC/Zombie.tscn')  #Cargar escena de zombie
+onready var door_scene = load('res://Objects/StaticBody2D.tscn')
 
 onready var tilemap: TileMap = $TileMap  #Cargar variable TileMap 
 onready var tilemap2: TileMap = $TileMap2
@@ -55,6 +56,9 @@ func generate_house(start: Vector2):
 	for y in [start.y, end.y]:
 		for x in range(start.x, end.x):
 			if y == end.y and x == int((start.x + end.x)/2):
+				var door = door_scene.instance()
+				door.global_position = tilemap.map_to_world(Vector2(x+2,y+2))
+				add_child(door)
 				continue
 			tilemap2.set_cell(x, y, 0)
 

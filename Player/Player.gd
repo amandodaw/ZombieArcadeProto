@@ -50,6 +50,11 @@ func _input(event):
 			if !$reload_timer.is_stopped():
 				$reload_timer.stop()
 			state = state_enum.Idle
+	if event.is_action_pressed("ui_select"):
+		for body in $hitbox.get_overlapping_bodies():
+			if not body is TileMap and body.TYPE == "DOOR":
+				body.change_frame()
+		print(position)
 
 
 func _physics_process(_delta):
@@ -114,7 +119,7 @@ func aim():
 		gun.flip_v = true
 	else:
 		gun.flip_v = false
-	gun.raycast_cast()
+	gun.aim()
 
 
 func stop_aim():

@@ -101,5 +101,17 @@ position = Vector2( 8.02715, -0.743252 )
 shape = SubResource( 3 )
 
 [node name="ray2d" type="RayCast2D" parent="."]
+
+[node name="Label" type="Label" parent="."]
+margin_left = -24.0814
+margin_top = -40.7304
+margin_right = 41.9186
+margin_bottom = -9.73035
+text = "Pulsa \"e\"
+para coger"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="animation_finished" from="anim" to="." method="_on_anim_animation_finished"]
-[connection signal="body_entered" from="pickbox" to="." method="_on_pickbox_body_entered"]
+[connection signal="area_entered" from="pickbox" to="." method="_on_pickbox_area_entered"]
+[connection signal="area_exited" from="pickbox" to="." method="_on_pickbox_area_exited"]
