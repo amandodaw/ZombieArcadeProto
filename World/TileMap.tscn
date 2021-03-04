@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://World/new_tileset.tres" type="TileSet" id=1]
+
+[node name="TileMap" type="TileMap"]
+light_mask = -2147483647
+z_index = -1
+tile_set = ExtResource( 1 )
+cell_size = Vector2( 16, 16 )
+format = 1
