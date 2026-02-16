@@ -14,8 +14,8 @@ const INITIAL_AMMO = 8
 @onready var world_floor: Polygon2D = $WorldFloor
 @onready var walls_root: Node2D = $Walls
 @onready var entities_root: Node2D = $Entities
-@onready var timer_label: Label = $CanvasLayer/HUD/VBoxContainer/TimerLabel
-@onready var ammo_label: Label = $CanvasLayer/HUD/VBoxContainer/AmmoLabel
+@onready var timer_label: Label = $CanvasLayer/HUD/HUDPanel/Info/VBoxContainer/TimerLabel
+@onready var ammo_label: Label = $CanvasLayer/HUD/HUDPanel/Info/VBoxContainer/AmmoLabel
 @onready var zombie_spawn_timer: Timer = $ZombieSpawnTimer
 @onready var ammo_spawn_timer: Timer = $AmmoSpawnTimer
 

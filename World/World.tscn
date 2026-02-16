@@ -7,6 +7,10 @@
 font_size = 18
 font_color = Color(0.95, 0.95, 0.95, 1)
 
+[sub_resource type="LabelSettings" id="2"]
+font_size = 14
+font_color = Color(0.92, 0.92, 0.92, 0.95)
+
 [node name="World" type="Node2D"]
 script = ExtResource("1")
 
@@ -41,13 +45,21 @@ offset_top = 8.0
 offset_right = -8.0
 offset_bottom = -8.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/HUD"]
+[node name="HUDPanel" type="PanelContainer" parent="CanvasLayer/HUD"]
 
-[node name="TimerLabel" type="Label" parent="CanvasLayer/HUD/VBoxContainer"]
+[node name="Info" type="MarginContainer" parent="CanvasLayer/HUD/HUDPanel"]
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/HUD/HUDPanel/Info"]
+
+[node name="TimerLabel" type="Label" parent="CanvasLayer/HUD/HUDPanel/Info/VBoxContainer"]
 label_settings = SubResource("1")
 text = "Tiempo: 0.0 s"
 
-[node name="AmmoLabel" type="Label" parent="CanvasLayer/HUD/VBoxContainer"]
+[node name="AmmoLabel" type="Label" parent="CanvasLayer/HUD/HUDPanel/Info/VBoxContainer"]
 label_settings = SubResource("1")
 text = "Balas: 0/0"
 
@@ -66,21 +78,27 @@ offset_bottom = 46.0
 theme_override_constants/separation = 10
 
 [node name="Title" type="Label" parent="CanvasLayer/ControlsTop/Panel/ControlsBar"]
+label_settings = SubResource("2")
 text = "Mando:"
 
 [node name="LS" type="Label" parent="CanvasLayer/ControlsTop/Panel/ControlsBar"]
+label_settings = SubResource("2")
 text = "[LS] Mover"
 
 [node name="RS" type="Label" parent="CanvasLayer/ControlsTop/Panel/ControlsBar"]
+label_settings = SubResource("2")
 text = "[RS] Apuntar"
 
 [node name="RB" type="Label" parent="CanvasLayer/ControlsTop/Panel/ControlsBar"]
+label_settings = SubResource("2")
 text = "[RB] Disparar"
 
 [node name="B" type="Label" parent="CanvasLayer/ControlsTop/Panel/ControlsBar"]
+label_settings = SubResource("2")
 text = "[B] Bate"
 
 [node name="Y" type="Label" parent="CanvasLayer/ControlsTop/Panel/ControlsBar"]
+label_settings = SubResource("2")
 text = "[Y] Recargar"
 
 [connection signal="timeout" from="ZombieSpawnTimer" to="." method="_on_zombie_spawn_timer_timeout"]
