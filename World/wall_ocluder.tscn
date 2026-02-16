@@ -2,7 +2,7 @@
 
 [sub_resource type="OccluderPolygon2D" id=1]
 cull_mode = 2
-polygon = PoolVector2Array( 0, 0, 0, 16, 16, 16, 16, 0 )
+polygon = PackedVector2Array( 0, 0, 0, 16, 16, 16, 16, 0 )
 
 [node name="wall_occluder" type="LightOccluder2D"]
 light_mask = 2

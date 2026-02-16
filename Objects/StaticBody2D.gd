@@ -8,13 +8,13 @@ func _ready():
 
 
 func change_frame():
-	if $Sprite.frame == 0:
-		$Sprite.frame = 1
+	if $Sprite2D.frame == 0:
+		$Sprite2D.frame = 1
 	else:
-		$Sprite.frame = 0
+		$Sprite2D.frame = 0
 
 func _on_Sprite_frame_changed():
-	if $Sprite.frame == 0:
+	if $Sprite2D.frame == 0:
 		$CollisionShape2D.disabled = false
 		$CollisionShape2D2.disabled = true
 	else:

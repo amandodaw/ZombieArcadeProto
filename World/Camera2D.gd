@@ -3,6 +3,10 @@ extends Camera2D
 @onready var player: Node2D = get_node('../Player')
 
 
+func _ready():
+	make_current()
+
+
 func _physics_process(_delta):
 	if player == null:
 		return

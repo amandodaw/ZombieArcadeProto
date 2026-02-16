@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=2]
 
-[ext_resource path="res://Sprites/casaInterior1.png" type="Texture" id=1]
-[ext_resource path="res://Sprites/casaTejado1.png" type="Texture" id=2]
+[ext_resource path="res://Sprites/casaInterior1.png" type="Texture2D" id=1]
+[ext_resource path="res://Sprites/casaTejado1.png" type="Texture2D" id=2]
 [ext_resource path="res://Objects/House.gd" type="Script" id=3]
 
 [sub_resource type="SegmentShape2D" id=1]
@@ -23,12 +23,12 @@ b = Vector2( 32, 0 )
 extents = Vector2( 44, 26 )
 
 [sub_resource type="OccluderPolygon2D" id=6]
-polygon = PoolVector2Array( -47.9099, 63.2796, 47.4162, 63.2796, 47.4162, -15.3422, -46.7963, -16.0103 )
+polygon = PackedVector2Array( -47.9099, 63.2796, 47.4162, 63.2796, 47.4162, -15.3422, -46.7963, -16.0103 )
 
 [node name="House" type="StaticBody2D"]
 script = ExtResource( 3 )
 
-[node name="Sprite" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource( 1 )
 offset = Vector2( 0, 24 )
 

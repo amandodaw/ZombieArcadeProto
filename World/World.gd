@@ -1,93 +1,126 @@
 extends Node2D
 
-const ZOMBIE_SCENE = preload('res://NPC/Zombie.tscn')  #Cargar escena de zombie
-const DOOR_SCENE = preload('res://Objects/StaticBody2D.tscn')
+const ZOMBIE_SCENE = preload("res://NPC/Zombie.tscn")
+const AMMO_SCENE = preload("res://Objects/Ammo.tscn")
+const WALL_TEXTURE = preload("res://Sprites/wall_tile.png")
 
-@onready var tilemap: TileMap = $TileMap  #Cargar variable TileMap
-@onready var tilemap2: TileMap = $TileMap2
+const TILE_SIZE = 16
+const MAP_WIDTH = 64
+const MAP_HEIGHT = 40
+const INITIAL_ZOMBIES = 5
+const INITIAL_AMMO = 8
 
-var map_size: Vector2i
-var half_cell_size: Vector2
+@onready var player: CharacterBody2D = $Player
+@onready var world_floor: Polygon2D = $WorldFloor
+@onready var walls_root: Node2D = $Walls
+@onready var entities_root: Node2D = $Entities
+@onready var timer_label: Label = $CanvasLayer/HUD/VBoxContainer/TimerLabel
+@onready var ammo_label: Label = $CanvasLayer/HUD/VBoxContainer/AmmoLabel
+@onready var zombie_spawn_timer: Timer = $ZombieSpawnTimer
+@onready var ammo_spawn_timer: Timer = $AmmoSpawnTimer
 
 var rng := RandomNumberGenerator.new()
-
-var house_size: Vector2i = Vector2i(12, 6)
-var zombie_number: int = 1
-var zombie_max_number: int = 3
+var start_time_msec: int = 0
 
 
-func _ready():
-	#setViewCenter()
-	var tile_size: Vector2i = tilemap.tile_set.tile_size
-	map_size = Vector2i((get_viewport_rect().size / Vector2(tile_size) / 2.0).floor())
-	half_cell_size = Vector2(tile_size) / 2.0
+func _ready() -> void:
 	rng.randomize()
-	generate_border()
-	generate_inner()
-	generate_house(Vector2i(5, 5))
-	tilemap2.add_occluders()
+	_setup_floor()
+	_generate_walls()
+	player.global_position = _map_center()
+	player.died.connect(_on_player_died)
+	start_time_msec = Time.get_ticks_msec()
+	for _i in INITIAL_ZOMBIES:
+		spawn_zombie()
+	for _i in INITIAL_AMMO:
+		spawn_ammo()
 
 
-func generate_border():
-	# Genera el borde del mapa usando el tile wall
-	for x in [0, map_size.x]:
-		for y in range(map_size.y + 1):
-			tilemap.set_cell(0, Vector2i(x, y), 1)
-	for y in [0, map_size.y]:
-		for x in range(map_size.x):
-			tilemap.set_cell(0, Vector2i(x, y), 1)
+func _process(_delta: float) -> void:
+	var elapsed := float(Time.get_ticks_msec() - start_time_msec) / 1000.0
+	var mags_available: int = player.ammo_reserve / player.gun_clip_size
+	timer_label.text = "Tiempo: %.1f s" % elapsed
+	ammo_label.text = "Balas: %d/%d | Cargadores: %d" % [player.gun_ammo_loaded, player.gun_clip_size, mags_available]
 
 
-func generate_inner():
-	#Genera el interior del mapa usando el tile floor
-	for x in range(1, map_size.x):
-		for y in range(1, map_size.y):
-			tilemap.set_cell(0, Vector2i(x, y), 0)
+func _setup_floor() -> void:
+	var world_size := Vector2(MAP_WIDTH * TILE_SIZE, MAP_HEIGHT * TILE_SIZE)
+	var top_left := Vector2.ZERO
+	world_floor.polygon = PackedVector2Array([
+		top_left,
+		top_left + Vector2(world_size.x, 0),
+		top_left + world_size,
+		top_left + Vector2(0, world_size.y)
+	])
 
 
-func generate_house(start: Vector2i):
-	var end: Vector2i = start + house_size
-	for x in [start.x, end.x]:
-		for y in range(start.y, end.y + 1):
-			tilemap2.set_cell(0, Vector2i(x, y), 0)
-	for y in [start.y, end.y]:
-		for x in range(start.x, end.x):
-			if y == end.y and x == int((start.x + end.x) / 2):
-				var door = DOOR_SCENE.instantiate()
-				door.global_position = tilemap.map_to_local(Vector2i(x + 2, y + 2))
-				add_child(door)
-				continue
-			tilemap2.set_cell(0, Vector2i(x, y), 0)
+func _generate_walls() -> void:
+	for x in MAP_WIDTH:
+		_add_wall_cell(Vector2i(x, 0))
+		_add_wall_cell(Vector2i(x, MAP_HEIGHT - 1))
+	for y in MAP_HEIGHT:
+		_add_wall_cell(Vector2i(0, y))
+		_add_wall_cell(Vector2i(MAP_WIDTH - 1, y))
 
 
-func spawn_zombies():
-	#Invocar zombies en un lugar aleatorio del mapa
-	for _i in zombie_number:
-		var zombie = ZOMBIE_SCENE.instantiate()
-		var rand_pos: Vector2i = Vector2i(
-			rng.randi_range(1, map_size.x - 1), rng.randi_range(1, map_size.y - 1)
+func _add_wall_cell(cell: Vector2i) -> void:
+	var body := StaticBody2D.new()
+	var pos := _cell_to_pos(cell)
+	body.global_position = pos
+
+	var col := CollisionShape2D.new()
+	var shape := RectangleShape2D.new()
+	shape.size = Vector2(TILE_SIZE, TILE_SIZE)
+	col.shape = shape
+	body.add_child(col)
+
+	var sprite := Sprite2D.new()
+	sprite.texture = WALL_TEXTURE
+	body.add_child(sprite)
+
+	walls_root.add_child(body)
+
+
+func spawn_zombie() -> void:
+	var zombie: CharacterBody2D = ZOMBIE_SCENE.instantiate()
+	zombie.global_position = _random_free_point(48.0)
+	zombie.set_target(player)
+	entities_root.add_child(zombie)
+
+
+func spawn_ammo() -> void:
+	var ammo: Area2D = AMMO_SCENE.instantiate()
+	ammo.global_position = _random_free_point(0.0)
+	entities_root.add_child(ammo)
+
+
+func _random_free_point(distance_from_player: float) -> Vector2:
+	for _i in 200:
+		var p := Vector2(
+			rng.randi_range(TILE_SIZE * 2, MAP_WIDTH * TILE_SIZE - TILE_SIZE * 2),
+			rng.randi_range(TILE_SIZE * 2, MAP_HEIGHT * TILE_SIZE - TILE_SIZE * 2)
 		)
-		zombie.position = tilemap.map_to_local(rand_pos) + half_cell_size
-		add_child(zombie)
-	if zombie_number < zombie_max_number:
-		zombie_number += 1
-	else:
-		zombie_number = 0
+		if distance_from_player > 0.0 and p.distance_to(player.global_position) < distance_from_player:
+			continue
+		return p
+	return _map_center()
 
 
-func game_over():
-	# Llamada cuando el jugador muere
-	get_tree().change_scene_to_file('res://World/menu.tscn')
-	queue_free()
+func _cell_to_pos(cell: Vector2i) -> Vector2:
+	return Vector2(cell * TILE_SIZE) + Vector2(TILE_SIZE / 2, TILE_SIZE / 2)
 
 
-func setViewCenter():
-	# Situa el juego en el centro de la primera pantalla
-
-	var screen_size = DisplayServer.screen_get_size()
-	var window_size = DisplayServer.window_get_size()
-	DisplayServer.window_set_position(screen_size*0.5 - window_size*0.5)
+func _map_center() -> Vector2:
+	return Vector2(MAP_WIDTH * TILE_SIZE * 0.5, MAP_HEIGHT * TILE_SIZE * 0.5)
 
 
-func _on_zombieSpawn_timer_timeout():
-	spawn_zombies()
+func _on_player_died() -> void:
+	get_tree().change_scene_to_file("res://World/menu.tscn")
+
+
+func _on_zombie_spawn_timer_timeout() -> void:
+	spawn_zombie()
+
+
+func _on_ammo_spawn_timer_timeout() -> void:
+	spawn_ammo()

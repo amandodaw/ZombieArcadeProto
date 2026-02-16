@@ -1,11 +1,10 @@
-extends Sprite2D
-
+extends Area2D
 
 const TYPE = "AMMO"
+@export var ammo_amount := 7
 
 
-func _on_pickbox_body_entered(body):
-	if not body is TileMap and not body is StaticBody2D:
-		if body.get("TYPE") == "PLAYER":
-			body.ammo_packs += 1
-			queue_free()
+func _on_body_entered(body: Node) -> void:
+	if body.has_method("add_ammo"):
+		body.add_ammo(ammo_amount)
+		queue_free()

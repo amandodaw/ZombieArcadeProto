@@ -52,7 +52,7 @@ func picked(body: Node):
 	$Label.visible = false
 	visible = false
 	$pickbox/CollisionShape2D.disabled = true
-	$Light2D.enabled = true
+	$PointLight2D.enabled = true
 	ray2d.enabled = true
 	position = Vector2(8,0)
 	body.gun = self
@@ -62,6 +62,6 @@ func picked(body: Node):
 
 func dropped(pos: Vector2):
 	$pickbox/CollisionShape2D.disabled = false
-	$Light2D.enabled = false
+	$PointLight2D.enabled = false
 	ray2d.enabled = false
 	position = pos

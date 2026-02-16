@@ -4,5 +4,5 @@
 
 [node name="Camera2D" type="Camera2D"]
 position = Vector2( 158.5, 111 )
-current = true
+enabled = true
 script = ExtResource( 1 )

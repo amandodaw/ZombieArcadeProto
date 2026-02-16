@@ -12,5 +12,14 @@ func _on_Button_pressed():
 func _on_Button2_pressed():
 	get_tree().quit()
 
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		_on_Button2_pressed()
+
 func set_focus_order():
-	$MarginContainer/VBoxContainer/Button.grab_focus()
+	var retry: Button = $MarginContainer/VBoxContainer/Button
+	var quit: Button = $MarginContainer/VBoxContainer/Button2
+	retry.focus_neighbor_bottom = retry.get_path_to(quit)
+	quit.focus_neighbor_top = quit.get_path_to(retry)
+	retry.grab_focus()
