@@ -8,7 +8,8 @@
 
 [node name="Test" type="Node2D"]
 
-[node name="YSort" type="YSort" parent="."]
+[node name="YSort" type="Node2D" parent="."]
+y_sort_enabled = true
 z_index = -4
 
 [node name="TileMap" parent="YSort" instance=ExtResource( 4 )]

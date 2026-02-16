@@ -6,5 +6,3 @@
 light_mask = -2147483647
 z_index = -1
 tile_set = ExtResource( 1 )
-cell_size = Vector2( 16, 16 )
-format = 1

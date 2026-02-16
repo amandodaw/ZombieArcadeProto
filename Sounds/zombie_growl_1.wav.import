@@ -1,13 +1,14 @@
 [remap]
 
 importer="wav"
-type="AudioStreamSample"
-path="res://.import/zombie_growl_1.wav-a794197238d262b88ccff76515e9153e.sample"
+type="AudioStreamWAV"
+uid="uid://ctldyxihabyko"
+path="res://.godot/imported/zombie_growl_1.wav-a794197238d262b88ccff76515e9153e.sample"
 
 [deps]
 
 source_file="res://Sounds/zombie_growl_1.wav"
-dest_files=[ "res://.import/zombie_growl_1.wav-a794197238d262b88ccff76515e9153e.sample" ]
+dest_files=["res://.godot/imported/zombie_growl_1.wav-a794197238d262b88ccff76515e9153e.sample"]
 
 [params]
 
@@ -17,5 +18,7 @@ force/max_rate=false
 force/max_rate_hz=44100
 edit/trim=false
 edit/normalize=false
-edit/loop=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
 compress/mode=0

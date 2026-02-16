@@ -1,22 +1,15 @@
 extends 'res://Objects/base_weapon.gd'
 
-onready var gunflash_scene = load('res://Objects/gunflash.tscn') # Cargar efecto disparo
-
-onready var ray2d = $ray2d
-onready var reload_player = $reload
-
-
 const TYPE = "WEAPON"
 
 
-func ready():
+func _ready():
 	damage = 10 # Daño del arma
 
 
 func shoot():
 	$hitbox/CollisionPolygon2D.disabled = false
 	$anim.play("Hit")
-	print(position," eh ", global_position)
 
 
 func aim():
@@ -43,7 +36,7 @@ func dropped(pos: Vector2):
 	position = pos
 
 
-func _on_anim_animation_finished(anim_name):
+func _on_anim_animation_finished(_anim_name):
 	$hitbox/CollisionPolygon2D.disabled = true
 	# Si no está apuntando, eliminar el nodo
 	if not gun_owner.is_aiming:
@@ -56,11 +49,11 @@ func _on_hitbox_area_entered(area):
 	var body = area.get_parent()
 	if body == self:
 		return
-	if body.TYPE == "ZOMBIE":
+	if body.get("TYPE") == "ZOMBIE":
 		body.health = body.health - damage
 		# Enviar la dirección del disparo para dirigir el knockback
 		body.knockdir = body.position - gun_owner.position
 
 
-func _on_pickbox_area_exited(area):
+func _on_pickbox_area_exited(_area):
 	$Label.visible = false

@@ -141,14 +141,14 @@ tracks/0/keys = {
 cull_mode = 2
 polygon = PoolVector2Array( -2.60784, -6.37623, -4.39165, -5.03837, -4.68895, 2.39417, -2.75649, 5.21854, 2.29764, 5.06989, 4.37875, 2.54282, 4.08145, -5.33568, 1.85168, -6.52488 )
 
-[node name="Player" type="KinematicBody2D"]
+[node name="Player" type="CharacterBody2D"]
 show_behind_parent = true
 light_mask = 4
 z_index = 1
 collision_layer = 3
 script = ExtResource( 2 )
 
-[node name="Sprite" type="Sprite" parent="."]
+[node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource( 1 )
 hframes = 16
 
@@ -188,7 +188,7 @@ light_mask = 4
 [node name="reload_timer" type="Timer" parent="."]
 one_shot = true
 
-[node name="Light2D" type="Light2D" parent="."]
+[node name="Light2D" type="PointLight2D" parent="."]
 texture = ExtResource( 4 )
 range_item_cull_mask = 5
 shadow_enabled = true

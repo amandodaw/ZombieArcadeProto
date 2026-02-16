@@ -28,11 +28,11 @@ polygon = PoolVector2Array( -47.9099, 63.2796, 47.4162, 63.2796, 47.4162, -15.34
 [node name="House" type="StaticBody2D"]
 script = ExtResource( 3 )
 
-[node name="Sprite" type="Sprite" parent="."]
+[node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource( 1 )
 offset = Vector2( 0, 24 )
 
-[node name="Sprite2" type="Sprite" parent="."]
+[node name="Sprite2" type="Sprite2D" parent="."]
 show_behind_parent = true
 z_index = 1
 texture = ExtResource( 2 )

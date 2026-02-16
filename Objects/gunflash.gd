@@ -1,6 +1,6 @@
-extends Light2D
+extends PointLight2D
 
-onready var flash_scene = load('res://flash.tscn')
+const FLASH_SCENE = preload('res://flash.tscn')
 
 
 func _ready():
@@ -15,7 +15,6 @@ func _on_Timer_timeout():
 
 
 func spawn_flash():
-	var flash = flash_scene.instance()
+	var flash = FLASH_SCENE.instantiate()
 	flash.position = position
 	get_parent().add_child(flash)
-

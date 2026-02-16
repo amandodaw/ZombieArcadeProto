@@ -10,7 +10,8 @@
 
 [node name="Test" type="Node2D"]
 
-[node name="YSort" type="YSort" parent="."]
+[node name="YSort" type="Node2D" parent="."]
+y_sort_enabled = true
 
 [node name="Player" parent="YSort" instance=ExtResource( 1 )]
 show_behind_parent = false

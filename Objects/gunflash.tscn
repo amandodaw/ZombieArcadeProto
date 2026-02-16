@@ -3,7 +3,7 @@
 [ext_resource path="res://Sprites/gunflash.png" type="Texture" id=1]
 [ext_resource path="res://Objects/gunflash.gd" type="Script" id=2]
 
-[node name="gunflash" type="Light2D"]
+[node name="gunflash" type="PointLight2D"]
 position = Vector2( 12, -2 )
 texture = ExtResource( 1 )
 offset = Vector2( 8, 0 )

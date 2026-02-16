@@ -32,7 +32,7 @@ tracks/1/keys = {
 "values": [ Vector2( 0, 0 ), Vector2( 4, 0 ), Vector2( 4, 0 ), Vector2( 0, 0 ) ]
 }
 
-[node name="Bat" type="Sprite"]
+[node name="Bat" type="Sprite2D"]
 texture = ExtResource( 1 )
 offset = Vector2( -8, 0 )
 script = ExtResource( 2 )

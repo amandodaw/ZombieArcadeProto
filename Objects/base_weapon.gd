@@ -1,7 +1,7 @@
-extends Sprite
+extends Sprite2D
 
 
-onready var gun_owner #= get_parent().get_parent()
+var gun_owner: Node2D #= get_parent().get_parent()
 
 var is_picked = false
 var damage: int
@@ -12,7 +12,7 @@ func shoot():
 	pass
 
 
-func damage(body: Node):
+func apply_damage(body: Node):
 	body.health = body.health - damage
 	# Enviar la dirección del disparo para dirigir el knockback
 	body.knockdir = body.position - gun_owner.position
@@ -33,8 +33,7 @@ func picked(body: Node):
 func dropped(pos: Vector2):
 	pass
 
-func _on_anim_animation_finished(anim_name):
-	print(gun_owner)
+func _on_anim_animation_finished(_anim_name):
 	# Si no está apuntando, eliminar el nodo
 	if not gun_owner.is_aiming:
 		queue_free()
@@ -46,7 +45,7 @@ func _on_pickbox_area_entered(area):
 	var body = area.get_parent()
 	if body == self:
 		return
-	if body.TYPE == "PLAYER":
+	if body.get("TYPE") == "PLAYER":
 		$Label.visible = true
 		#picked(body)
 
@@ -55,9 +54,9 @@ func _on_hitbox_area_entered(area):
 	var body = area.get_parent()
 	if body == self:
 		return
-	if body.TYPE == "ZOMBIE":
-		damage(body)
+	if body.get("TYPE") == "ZOMBIE":
+		apply_damage(body)
 
 
-func _on_pickbox_area_exited(area):
+func _on_pickbox_area_exited(_area):
 	$Label.visible = false

@@ -1,0 +1,15 @@
+# Godot 4 local/editor state
+.godot/
+
+# Godot export templates and secrets
+/export.cfg
+/export_presets.cfg
+
+# Mono/.NET (if enabled later)
+/.mono/
+/data_*/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/*.log

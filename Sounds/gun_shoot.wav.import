@@ -1,13 +1,14 @@
 [remap]
 
 importer="wav"
-type="AudioStreamSample"
-path="res://.import/gun_shoot.wav-9e4d4652698cf709f939290bf76dba92.sample"
+type="AudioStreamWAV"
+uid="uid://bpamlorr7faxs"
+path="res://.godot/imported/gun_shoot.wav-9e4d4652698cf709f939290bf76dba92.sample"
 
 [deps]
 
 source_file="res://Sounds/gun_shoot.wav"
-dest_files=[ "res://.import/gun_shoot.wav-9e4d4652698cf709f939290bf76dba92.sample" ]
+dest_files=["res://.godot/imported/gun_shoot.wav-9e4d4652698cf709f939290bf76dba92.sample"]
 
 [params]
 
@@ -17,5 +18,7 @@ force/max_rate=false
 force/max_rate_hz=44100
 edit/trim=false
 edit/normalize=false
-edit/loop=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
 compress/mode=0

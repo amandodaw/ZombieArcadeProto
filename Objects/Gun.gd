@@ -1,9 +1,9 @@
 extends 'res://Objects/base_weapon.gd'
 
-onready var gunflash_scene = load('res://Objects/gunflash.tscn') # Cargar efecto disparo
+const GUNFLASH_SCENE = preload('res://Objects/gunflash.tscn') # Cargar efecto disparo
 
-onready var ray2d = $ray2d
-onready var reload_player = $reload
+@onready var ray2d: RayCast2D = $ray2d
+@onready var reload_player: AudioStreamPlayer2D = $reload
 
 
 const TYPE = "WEAPON"
@@ -19,15 +19,13 @@ func _ready():
 
 
 func shoot():
-	print(get_parent())
 	if ammo_loaded == 0 :
 		$dryshot.play()
 		gun_owner.state = gun_owner.state_enum.Idle
-		print("HE LLEGADO AQUI :", gun_owner.state)
 		return
 	ammo_loaded -= 1
 	# Esta función crea un hijo efecto de disparo
-	var gunflash = gunflash_scene.instance()
+	var gunflash = GUNFLASH_SCENE.instantiate()
 	add_child(gunflash)
 	# Después reproduce la animación según el lado
 	$gunshot.play()
@@ -39,13 +37,13 @@ func shoot():
 	if ray2d.is_colliding():
 		var collider = ray2d.get_collider()
 		# Y es del tipo zombie 
-		if not collider is TileMap and not collider is StaticBody2D and collider.TYPE == "ZOMBIE":
-			damage(collider)
+		if not collider is TileMap and not collider is StaticBody2D and collider.get("TYPE") == "ZOMBIE":
+			apply_damage(collider)
 
 
 func aim():
 	# Función bucle para castear el rayo al lugar apuntado
-	ray2d.cast_to = Vector2.RIGHT*gun_alcance
+	ray2d.target_position = Vector2.RIGHT * gun_alcance
 
 
 func picked(body: Node):

@@ -1,6 +1,6 @@
 extends Camera2D
 
-onready var player = get_node('../Player')
+@onready var player: Node2D = get_node('../Player')
 
 
 func _physics_process(_delta):
